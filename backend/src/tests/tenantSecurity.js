@@ -18,33 +18,36 @@ async function runTests() {
   process.env.BYPASS_TENANT_CONTEXT = "true";
   process.env.NODE_ENV = "development"; // Ensure bypass is allowed
 
+  // Clear existing test data in correct dependency order
+  await basePrisma.payment.deleteMany({});
+  await basePrisma.fee.deleteMany({});
+  await basePrisma.mark.deleteMany({});
+  await basePrisma.attendance.deleteMany({});
+  await basePrisma.assignmentSubmission.deleteMany({});
+  await basePrisma.assignment.deleteMany({});
+  await basePrisma.aIAnalysis.deleteMany({});
+  await basePrisma.timetable.deleteMany({});
+  await basePrisma.student.deleteMany({});
+  await basePrisma.teacher.deleteMany({});
+  await basePrisma.admin.deleteMany({});
+  await basePrisma.user.deleteMany({});
+  await basePrisma.subject.deleteMany({});
+  await basePrisma.course.deleteMany({});
+  await basePrisma.department.deleteMany({});
+  await basePrisma.school.deleteMany({});
+
   console.log("1. Seeding Schools...");
-  let schoolAlpha = await prisma.school.findUnique({ where: { slug: "school-alpha" } });
-  if (schoolAlpha) {
-    // Clear old test data to ensure test repeatability
-    await basePrisma.student.deleteMany({ where: { schoolId: schoolAlpha.id } });
-    await basePrisma.user.deleteMany({ where: { schoolId: schoolAlpha.id } });
-    await basePrisma.course.deleteMany({ where: { schoolId: schoolAlpha.id } });
-    await basePrisma.school.delete({ where: { id: schoolAlpha.id } });
-  }
-  schoolAlpha = await prisma.school.create({
+  const schoolAlpha = await prisma.school.create({
     data: { name: "School Alpha", slug: "school-alpha" },
   });
 
-  let schoolBeta = await prisma.school.findUnique({ where: { slug: "school-beta" } });
-  if (schoolBeta) {
-    await basePrisma.student.deleteMany({ where: { schoolId: schoolBeta.id } });
-    await basePrisma.user.deleteMany({ where: { schoolId: schoolBeta.id } });
-    await basePrisma.course.deleteMany({ where: { schoolId: schoolBeta.id } });
-    await basePrisma.school.delete({ where: { id: schoolBeta.id } });
-  }
-  schoolBeta = await prisma.school.create({
+  const schoolBeta = await prisma.school.create({
     data: { name: "School Beta", slug: "school-beta" },
   });
 
   console.log("2. Seeding Users and Scoped Records...");
   const hashed = await bcrypt.hash("TestPass123", 12);
-  
+
   const userAlpha = await prisma.user.create({
     data: { name: "Student Alpha", email: "student.alpha@example.com", password: hashed, role: "STUDENT", schoolId: schoolAlpha.id }
   });
