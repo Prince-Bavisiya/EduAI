@@ -1,4 +1,4 @@
-import { request } from "./apiClient";
+import { request, API_URL } from "./apiClient";
 
 export const getSubjects = async (params: { page?: number; limit?: number; search?: string; courseId?: number; teacherId?: number } = {}) => {
   const query = new URLSearchParams();

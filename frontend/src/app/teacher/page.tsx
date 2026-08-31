@@ -6,6 +6,8 @@ import { getTimetable } from "@/services/timetableService";
 import { getStudents } from "@/services/studentService";
 import { markAttendance } from "@/services/attendanceService";
 
+import { API_URL } from "@/services/apiClient";
+
 interface Subject {
   id: number;
   name: string;
@@ -82,7 +84,6 @@ interface Submission {
 }
 
 const DAYS_OF_WEEK = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 const toMins = (t: string) => {
   if (!t || !t.includes(":")) return 0;

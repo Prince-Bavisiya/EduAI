@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { getCourses, getCourseById } from "@/services/academicService";
 import { getExams, createExam, deleteExam } from "@/services/examService";
+import { API_URL } from "@/services/apiClient";
 
 interface Course {
   id: number;
@@ -184,7 +185,6 @@ export default function ExamsDashboardPage() {
     try {
       setAuthLoading(true);
       setAuthError("");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

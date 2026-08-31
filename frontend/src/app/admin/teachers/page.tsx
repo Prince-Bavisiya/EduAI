@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getTeachers, createTeacher, updateTeacher, deleteTeacher } from "@/services/teacherService";
 import { getDepartments, getCourses } from "@/services/academicService";
 import { getSubjects } from "@/services/subjectService";
+import { API_URL } from "@/services/apiClient";
 
 interface Department {
   id: number;
@@ -142,7 +143,6 @@ export default function TeachersPage() {
     try {
       setAuthLoading(true);
       setAuthError("");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

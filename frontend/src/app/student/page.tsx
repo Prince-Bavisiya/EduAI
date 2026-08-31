@@ -14,8 +14,7 @@ import {
 } from "@/services/studentPortalService";
 import { getTimetable } from "@/services/timetableService";
 import { getStudentAnalysis, sendChatMessage } from "@/services/aiService";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+import { API_URL } from "@/services/apiClient";
 
 interface ExamMark {
   id: number;

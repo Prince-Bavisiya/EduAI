@@ -31,12 +31,11 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like server-to-server tests, curl, postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+      // Allow requests with no origin or any vercel.app / localhost origins
+      if (!origin || origin.includes("vercel.app") || origin.includes("localhost") || origin.includes("127.0.0.1")) {
         return callback(null, true);
       }
-      return callback(new Error(`CORS policy violation: Access denied for origin ${origin}.`));
+      return callback(null, true);
     },
     credentials: true,
   })

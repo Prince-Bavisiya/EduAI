@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getCourses, getCourseById } from "@/services/academicService";
 import { getStudents } from "@/services/studentService";
 import { getAttendance, markAttendance } from "@/services/attendanceService";
+import { API_URL } from "@/services/apiClient";
 
 type AttendanceStatus = "PRESENT" | "ABSENT" | "LATE";
 
@@ -211,7 +212,6 @@ export default function AttendanceDashboardPage() {
     try {
       setAuthLoading(true);
       setAuthError("");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

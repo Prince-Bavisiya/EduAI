@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { API_URL } from "@/services/apiClient";
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -15,7 +16,6 @@ export default function AdminDashboardPage() {
     try {
       setLoadingStats(true);
       const token = localStorage.getItem("eduai_token");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
       const res = await fetch(`${API_URL}/me/dashboard`, {
         headers: {
           "Content-Type": "application/json",

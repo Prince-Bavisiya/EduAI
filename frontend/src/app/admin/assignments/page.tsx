@@ -9,6 +9,7 @@ import {
   getSubmissionsByAssignment,
   gradeSubmission,
 } from "@/services/assignmentService";
+import { API_URL } from "@/services/apiClient";
 
 interface Course {
   id: number;
@@ -266,7 +267,6 @@ export default function AssignmentDashboardPage() {
     try {
       setAuthLoading(true);
       setAuthError("");
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
