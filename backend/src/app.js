@@ -26,7 +26,7 @@ const app = express();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
-  : ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"];
+  : ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "https://edu-ai-sigma-bice.vercel.app"];
 
 app.use(
   cors({

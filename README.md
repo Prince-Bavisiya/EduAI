@@ -363,6 +363,62 @@ EduAI/
 
 ---
 
+## ☁️ Production Hosting & Deployment Architecture
+
+EduAI operates on a robust, decoupled cloud topology designed for maximum availability, security, and scalability:
+
+```
+┌───────────────────────────────┐
+│        Frontend (Vercel)      │
+│  - Next.js 16.3 App Router    │
+│  - NEXT_PUBLIC_API_URL        │
+└───────────────┬───────────────┘
+                │ HTTPS REST (Bearer JWT)
+                ▼
+┌───────────────────────────────┐
+│        Backend (Aiven)        │
+│  - Node.js / Express 5.2      │
+│  - ALLOWED_ORIGINS (Vercel)   │
+│  - DATABASE_URL (Clever Cloud)│
+│  - JWT_SECRET                 │
+└───────────────┬───────────────┘
+                │ SSL PostgreSQL Connection
+                ▼
+┌───────────────────────────────┐
+│  Database (Clever Cloud)      │
+│  - PostgreSQL 15+             │
+│  - Multi-Tenant Schema        │
+│  - Prisma Migrations          │
+└───────────────────────────────┘
+```
+
+### Production Deployment Checklist:
+
+1. **Database Setup (Clever Cloud)**:
+   - Provision a PostgreSQL add-on on Clever Cloud.
+   - Note the connection string: `postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=require`
+   - Run migrations strictly via:
+     ```bash
+     DATABASE_URL="<clever-cloud-db-uri>" npx prisma migrate deploy
+     ```
+
+2. **Backend Deployment (Aiven)**:
+   - Deploy backend Node.js container / service.
+   - Configure environment variables:
+     - `DATABASE_URL`: Your Clever Cloud PostgreSQL URI.
+     - `JWT_SECRET`: High-entropy production cryptographic secret.
+     - `ALLOWED_ORIGINS`: Your Vercel frontend URL (e.g. `https://eduai-app.vercel.app`).
+     - `PORT`: 5000 (or platform port).
+     - `NODE_ENV`: `production`.
+
+3. **Frontend Deployment (Vercel)**:
+   - Deploy Next.js frontend repository on Vercel.
+   - Configure environment variable:
+     - `NEXT_PUBLIC_API_URL`: `https://<aiven-backend-url>/api`
+   - *Security Rule*: `DATABASE_URL` is never configured on Vercel.
+
+---
+
 ## 📋 Limitations & Realistic Future Roadmap
 
 ### Current Known Boundaries:
@@ -370,13 +426,12 @@ EduAI/
 - Single payment gateway placeholder; transaction records are stored internally without live Stripe/Razorpay webhooks.
 
 ### Recommended Next Phase:
-- Containerization with Docker & Docker Compose.
-- CI/CD pipeline automation with GitHub Actions.
-- Production deployment on cloud infrastructure (AWS/GCP/Vercel).
 - Rate limiting and Redis-backed session caching.
+- Automated Clever Cloud point-in-time recovery (PITR) backup verification.
 
 ---
 
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+

@@ -190,3 +190,40 @@ flowchart LR
 ```
 
 All `/api/me/*` routes resolve resource ownership strictly through backend database relationships originating from the verified `req.user.id`.
+
+---
+
+## 8. Production Cloud Topology & Security Perimeter
+
+EduAI is deployed across three specialized cloud tiers:
+
+```mermaid
+flowchart TD
+    Client["Browser Clients"]
+    
+    subgraph VercelEdge ["1. Presentation Layer (Vercel)"]
+        NextJS["Next.js 16.3 App Router SPA"]
+        VercelEnv["Environment: NEXT_PUBLIC_API_URL"]
+    end
+    
+    subgraph AivenCloud ["2. API & Service Layer (Aiven)"]
+        ExpressAPI["Node.js / Express 5.2 Application"]
+        AivenEnv["Environment:\n- DATABASE_URL (Clever Cloud)\n- JWT_SECRET\n- ALLOWED_ORIGINS (Vercel URL)\n- PORT"]
+    end
+    
+    subgraph CleverCloudDB ["3. Persistence Layer (Clever Cloud)"]
+        Postgres[(Clever Cloud PostgreSQL 15+)]
+        PrismaMigration["Prisma Schema & Migrations\n(20260817060900_init,\n20260825090200_add_multi_tenant_school_structure)"]
+    end
+    
+    Client -->|"HTTPS UI Navigation"| NextJS
+    NextJS -->|"REST API Requests (Bearer JWT)"| ExpressAPI
+    ExpressAPI -->|"Encrypted PostgreSQL Connection (SSL)"| Postgres
+```
+
+### Security & Deployment Rules:
+1. **Authoritative Database**: **Clever Cloud PostgreSQL** is the sole production database.
+2. **Strict Secret Boundary**: `DATABASE_URL` and `JWT_SECRET` are strictly isolated to the **Aiven** runtime environment and never exposed to the frontend or Vercel.
+3. **Migration Workflow**: Schema updates are applied strictly via `npx prisma migrate deploy` on the backend without resetting or dropping production tables.
+4. **CORS Enforcement**: Express backend `ALLOWED_ORIGINS` strictly validates and permits only the authorized Vercel domain.
+
