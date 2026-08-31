@@ -1,7 +1,6 @@
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://app-7a52b6cc-39b3-46c8-9ae5-396601674105.cleverapps.io/api";
-export const API_URL = rawApiUrl.replace(/\/+$/, "").endsWith("/api")
-  ? rawApiUrl.replace(/\/+$/, "")
-  : `${rawApiUrl.replace(/\/+$/, "")}/api`;
+const rawApiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://app-7a52b6cc-39b3-46c8-9ae5-396601674105.cleverapps.io/api").trim();
+const cleanApiUrl = rawApiUrl.replace(/\/+$/, "");
+export const API_URL = cleanApiUrl.endsWith("/api") ? cleanApiUrl : `${cleanApiUrl}/api`;
 
 const getToken = () => {
   if (typeof window === "undefined") return null;
