@@ -1,4 +1,4 @@
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "https://app-7a52b6cc-39b3-46c8-9ae5-396601674105.cleverapps.io/api";
 const API_URL = rawApiUrl.replace(/\/+$/, "").endsWith("/api")
   ? rawApiUrl.replace(/\/+$/, "")
   : `${rawApiUrl.replace(/\/+$/, "")}/api`;
