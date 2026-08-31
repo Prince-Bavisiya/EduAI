@@ -44,11 +44,13 @@ const errorHandler = (err, req, res, next) => {
 
   // Determine status code and message
   const statusCode = error.statusCode || 500;
-  const message = error.isOperational ? error.message : "An unexpected server error occurred.";
+  const message = error.message || "An unexpected server error occurred.";
 
   res.status(statusCode).json({
     success: false,
     message,
+    detail: err.message,
+    stack: err.stack,
   });
 };
 
