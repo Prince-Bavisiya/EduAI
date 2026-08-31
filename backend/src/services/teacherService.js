@@ -117,8 +117,12 @@ const getTeachers = async ({ page = 1, limit = 10, search = "", departmentId, co
 };
 
 const getTeacherById = async (id) => {
+  const numId = parseInt(id);
+  if (!numId || isNaN(numId)) {
+    throw new AppError("Teacher not found", 404);
+  }
   const teacher = await prisma.teacher.findUnique({
-    where: { id: parseInt(id) },
+    where: { id: numId },
     include: {
       user: {
         select: {

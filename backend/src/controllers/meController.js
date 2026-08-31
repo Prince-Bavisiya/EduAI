@@ -183,7 +183,7 @@ const getAssignments = async (req, res) => {
             marks: true,
             percentage: true,
             feedback: true,
-            createdAt: true,
+            submittedAt: true,
           },
         },
       },

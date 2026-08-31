@@ -133,7 +133,7 @@ const loginUser = async ({ email, password }) => {
       role: user.role,
       schoolId: user.schoolId, // Propagate schoolId context in token
     },
-    process.env.JWT_SECRET || "fallback_secret",
+    process.env.JWT_SECRET,
     {
       expiresIn: "1d",
     }

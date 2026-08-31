@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const tenantContext = require("../utils/context");
+const prisma = require("../config/prisma");
 
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -14,17 +15,31 @@ const authMiddleware = (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_secret");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    let schoolId = decoded.schoolId;
+
+    // SUPER_ADMIN edge case: if the JWT was issued before schoolId was stored,
+    // resolve the schoolId from the database to ensure tenant context is set correctly.
+    if (decoded.role === "SUPER_ADMIN" && !schoolId) {
+      const user = await prisma.user.findFirst({
+        where: { id: decoded.userId },
+        select: { schoolId: true },
+      });
+      if (user && user.schoolId) {
+        schoolId = user.schoolId;
+      }
+    }
 
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
       role: decoded.role,
-      schoolId: decoded.schoolId,
+      schoolId,
     };
 
-    // Execute downstream controllers and Prisma calls inside tenantContext storage
-    tenantContext.run({ schoolId: decoded.schoolId }, () => {
+    // Execute downstream controllers and Prisma calls inside tenant-scoped AsyncLocalStorage context
+    tenantContext.run({ schoolId }, () => {
       next();
     });
   } catch (error) {

@@ -1,7 +1,9 @@
 const prisma = require("../config/prisma");
 
 const normalizeDate = (dateVal) => {
+  if (!dateVal) return undefined;
   const d = new Date(dateVal);
+  if (isNaN(d.getTime())) return undefined;
   d.setUTCHours(0, 0, 0, 0);
   return d;
 };
