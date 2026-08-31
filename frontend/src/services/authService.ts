@@ -9,7 +9,13 @@ export const login = async (credentials: { email: string; password: string }) =>
     body: JSON.stringify(credentials),
   });
 
-  const data = await response.json();
+  let data: any = {};
+  const text = await response.text();
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { message: `Backend error (${response.status}): ${response.statusText}` };
+  }
 
   if (!response.ok) {
     throw new Error(data.message || "Invalid credentials");
@@ -37,7 +43,13 @@ export const register = async (userData: {
     body: JSON.stringify(userData),
   });
 
-  const data = await response.json();
+  let data: any = {};
+  const text = await response.text();
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    data = { message: `Backend error (${response.status}): ${response.statusText}` };
+  }
 
   if (!response.ok) {
     throw new Error(data.message || "Registration failed");
